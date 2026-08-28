@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Alarm } from '../components/alarm.jsx';
+import { Alarm } from '../components/Alarm.jsx';
 import { Plus } from 'lucide-react';
 import { AlarmService } from '../services/alarmService';
 import api from '../services/api';
