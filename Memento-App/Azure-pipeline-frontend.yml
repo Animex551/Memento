@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - Memento-App/**
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.x'
+  displayName: 'Instalar Node.js v20'
+
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '17'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+  displayName: 'Configurar JDK 17 (requerido para Android/Gradle)'
+
+- script: |
+    cd Memento-App
+    npm ci
+    npm run build
+  displayName: 'Compilar proyecto React (Vite)'
+
+- script: |
+    cd Memento-App
+    npx cap sync android
+  displayName: 'Sincronizar Capacitor con Android'
+
+- task: Gradle@3
+  inputs:
+    workingDirectory: 'Memento-App/android'
+    gradleWrapperFile: 'Memento-App/android/gradlew'
+    tasks: 'assembleDebug'
+    publishJUnitResults: false
+  displayName: 'Compilar archivo APK (Android Debug)'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'Memento-App/android/app/build/outputs/apk/debug/app-debug.apk'
+    ArtifactName: 'drop-android-apk'
+  displayName: 'Publicar APK ejecutable como Artefacto'
