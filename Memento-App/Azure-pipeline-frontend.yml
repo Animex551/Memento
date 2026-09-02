@@ -24,7 +24,7 @@ steps:
 
 - script: |
     cd Memento-App
-    npm ci
+    npm install
     npm run build
   displayName: 'Compilar proyecto React (Vite)'
 
